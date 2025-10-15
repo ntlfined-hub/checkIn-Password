@@ -29,15 +29,10 @@
     .chip:hover{ background:rgba(255,255,255,.12) }
     .mini-btn{ background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); border-radius:.7rem }
     .mini-btn:hover{ background:rgba(255,255,255,.18) }
-
     .tab-btn{ border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06) }
     .tab-btn[aria-selected="true"]{ background:rgba(16,185,129,.18); border-color:rgba(16,185,129,.4) }
     .tab-panel{ display:none } .tab-panel.active{ display:block }
-
-    .btn-equal{ padding:var(--input-padding-y) var(--input-padding-x); border-radius:var(--input-radius) }
     .row-card{ border-radius:1rem; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1) }
-
-    /* Auth Lock */
     body.auth-locked { overflow: hidden; }
     @keyframes shake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
     .shake { animation: shake .35s linear both; }
@@ -87,12 +82,125 @@
     </div>
     
     <div id="panel-1" class="tab-panel active">
-      </div>
+        <form id="checkinForm" class="glass card p-6 space-y-4">
+            <div>
+                <label for="nameSelect" class="block text-sm font-medium mb-2">ผู้ใช้งาน</label>
+                <select id="nameSelect" class="input">
+                    <option value="">-- เลือกชื่อ --</option>
+                    <option value="User A">User A</option>
+                    <option value="User B">User B</option>
+                </select>
+            </div>
+            <div>
+                <label for="dateInput" class="block text-sm font-medium mb-2">วันที่</label>
+                <input type="date" id="dateInput" class="input">
+            </div>
+            <div class="flex pill p-1">
+                <button type="button" id="fullBtn" class="flex-1 py-2 rounded-xl bg-white/20">เต็มวัน</button>
+                <button type="button" id="splitBtn" class="flex-1 py-2 rounded-xl">แยก AM/PM</button>
+            </div>
+            <div id="fullBox">
+                <label for="fullLocation" class="block text-sm font-medium mb-2">สถานที่</label>
+                <input type="text" id="fullLocation" class="input" placeholder="เช่น WFH, Office">
+            </div>
+            <div id="splitBox" class="hidden space-y-3">
+                <div>
+                    <label for="amLocation" class="block text-sm font-medium mb-2">🌅 AM</label>
+                    <input type="text" id="amLocation" class="input" placeholder="สถานที่ช่วงเช้า">
+                </div>
+                <div>
+                    <label for="pmLocation" class="block text-sm font-medium mb-2">🌆 PM</label>
+                    <input type="text" id="pmLocation" class="input" placeholder="สถานที่ช่วงบ่าย">
+                </div>
+            </div>
+            <button id="checkinBtn" type="submit" class="btn btn-cta w-full py-3 font-semibold">Check In</button>
+             <hr class="border-white/10">
+            <div class="space-y-3">
+                <h3 class="font-semibold text-lg">บันทึกข้อมูลหลายวัน (Bulk)</h3>
+                <div class="flex gap-2">
+                    <button id="bulkThisWeek" type="button" class="btn flex-1 py-2">จ–ศ สัปดาห์นี้</button>
+                    <button id="bulkNextWeek" type="button" class="btn flex-1 py-2">จ–ศ สัปดาห์หน้า</button>
+                </div>
+                <div class="flex items-end gap-2">
+                    <div class="flex-1">
+                        <label for="rangeStart" class="block text-sm mb-1">เริ่ม</label>
+                        <input type="date" id="rangeStart" class="input">
+                    </div>
+                    <div class="flex-1">
+                        <label for="rangeEnd" class="block text-sm mb-1">สิ้นสุด</label>
+                        <input type="date" id="rangeEnd" class="input">
+                    </div>
+                    <button id="bulkRange" type="button" class="btn px-4 self-stretch">บันทึก</button>
+                </div>
+            </div>
+            <hr class="border-white/10">
+             <div>
+                <h3 class="font-semibold text-lg mb-2">คำแนะนำจากเพื่อน</h3>
+                <div id="suggestLoading" class="hidden">กำลังโหลด...</div>
+                <div id="suggestEmpty" class="hidden text-white/70">ไม่มีข้อมูล</div>
+                <div id="suggestWrap" class="space-y-2"></div>
+            </div>
+        </form>
+    </div>
     <div id="panel-2" class="tab-panel">
-      </div>
+        <div class="glass card p-6 space-y-4">
+            <div>
+                <label for="viewName" class="block text-sm font-medium mb-2">เลือกผู้ใช้งาน</label>
+                <div class="flex gap-2">
+                    <select id="viewName" class="input flex-1">
+                         <option value="">-- เลือกชื่อ --</option>
+                         <option value="User A">User A</option>
+                         <option value="User B">User B</option>
+                    </select>
+                    <button id="viewBtn" type="button" class="btn px-5 font-semibold">ดูตาราง</button>
+                </div>
+            </div>
+            <div id="scheduleWrap" class="hidden">
+                <hr class="border-white/10 my-4">
+                <div id="scheduleList" class="space-y-3"></div>
+            </div>
+        </div>
+    </div>
     <div id="panel-3" class="tab-panel">
-      </div>
-
+        <div class="glass card p-6 space-y-4">
+            <h2 class="text-xl font-bold">ตั้งค่าส่ง Line Notify อัตโนมัติ</h2>
+            <p id="schedStatus" class="text-sm text-white/80">กำลังโหลดการตั้งค่า...</p>
+            <div>
+                <label class="flex items-center gap-3">
+                    <input type="checkbox" id="schedEnabled" class="w-5 h-5 accent-emerald-500">
+                    <span>เปิดใช้งานการส่งอัตโนมัติ</span>
+                </label>
+            </div>
+            <div>
+                <label for="schedTime" class="block text-sm font-medium mb-2">เวลาที่ส่ง (HH:mm)</label>
+                <input type="time" id="schedTime" class="input w-40">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-2">วันที่ต้องการให้ส่ง</label>
+                <div id="weekdayWrap" class="flex gap-2"></div>
+            </div>
+            <div>
+                <label class="flex items-center gap-3">
+                    <input type="checkbox" id="schedSkipHolidays" class="w-5 h-5 accent-emerald-500">
+                    <span>ข้ามวันหยุดนักขัตฤกษ์ (ถ้ามีข้อมูล)</span>
+                </label>
+            </div>
+             <div class="flex gap-3 pt-2">
+                <button id="saveSchedBtn" type="button" class="btn btn-cta flex-1 py-2 font-semibold">บันทึกตารางส่ง</button>
+                <button id="reloadSchedBtn" type="button" class="btn px-4">โหลดใหม่</button>
+            </div>
+            <hr class="border-white/10">
+            <h3 class="font-semibold">ส่งด้วยตนเอง</h3>
+            <div class="flex items-end gap-2">
+                <div class="flex-1">
+                    <label for="sendDateInput" class="block text-sm mb-1">เลือกวันที่</label>
+                    <input type="date" id="sendDateInput" class="input">
+                </div>
+                <button id="sendNowBtn" type="button" class="btn px-4 self-stretch">ส่งเข้าไลน์เดี๋ยวนี้</button>
+            </div>
+        </div>
+    </div>
+    
     <div id="status" class="hidden mt-6 p-4 rounded-2xl"></div>
     <div id="popup" class="hidden fixed inset-0 z-50 items-center justify-center p-6">
       <div class="absolute inset-0 bg-black/50"></div>
@@ -110,7 +218,6 @@
   <script>
   window.addEventListener('DOMContentLoaded', () => {
     /* ========== AUTH ========== */
-    // WARNING: Storing passwords client-side is very insecure.
     const PASSWORD = 'start2558';
     const AUTH_KEY = 'auth_ok';
 
@@ -140,7 +247,6 @@
       if(v===PASSWORD){ document.getElementById('authError').classList.add('hidden'); unlockApp(); }
       else{ shakeCard(); }
     }
-    
     document.getElementById('authBtn').addEventListener('click',tryAuth);
     document.getElementById('authInput').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); tryAuth(); }});
     document.getElementById('authToggle').addEventListener('click',()=>{
@@ -163,9 +269,8 @@
     window.closePopup = closePopup;
     document.getElementById('popupOk').addEventListener('click', closePopup);
 
-    function escapeHTML(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') }
-
     /* ========== UTILS & TABS ========== */
+    function escapeHTML(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') }
     const APP_SCRIPT_WEBAPP_URL='https://script.google.com/macros/s/AKfycbxKmlulJgGnv8pUqbbOYlK5mRn6jZ_DdQQCKoJ3dExHWl62mDOPhDR5usWbSpC38gzH/exec';
     const toLocalISO=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     function getWeekRange(offset=0){
@@ -175,14 +280,12 @@
       const fri=new Date(mon); fri.setDate(mon.getDate()+4);
       return {start:toLocalISO(mon),end:toLocalISO(fri)};
     }
-    
+
     const tabs=[{btn:'tab-1',panel:'panel-1'},{btn:'tab-2',panel:'panel-2'},{btn:'tab-3',panel:'panel-3'}];
     function activateTab(i){
       tabs.forEach((t,idx)=>{
-        const btn = document.getElementById(t.btn);
-        const panel = document.getElementById(t.panel);
-        if (btn) btn.setAttribute('aria-selected',i===idx?'true':'false');
-        if (panel) panel.classList.toggle('active',i===idx);
+        document.getElementById(t.btn)?.setAttribute('aria-selected',i===idx?'true':'false');
+        document.getElementById(t.panel)?.classList.toggle('active',i===idx);
       });
       localStorage.setItem('activeTab',String(i));
     }
@@ -193,97 +296,364 @@
     } else {
         activateTab(0);
     }
-    
+
     const today=toLocalISO(new Date());
-    // The following lines need the corresponding HTML elements to exist on the page.
-    // Make sure you have inputs with these IDs in your tab panels.
-    const dateInput=document.getElementById('dateInput');
-    if (dateInput) { dateInput.min=today; dateInput.value=today; }
-    const rangeStart=document.getElementById('rangeStart');
-    if (rangeStart) rangeStart.min=today;
-    const rangeEnd=document.getElementById('rangeEnd');
-    if (rangeEnd) rangeEnd.min=today;
-    const sendDateInput=document.getElementById('sendDateInput');
-    if (sendDateInput) { sendDateInput.min=today; sendDateInput.value=today; }
+    const dateInput=document.getElementById('dateInput'); dateInput.min=today; dateInput.value=today;
+    document.getElementById('rangeStart').min=today; document.getElementById('rangeEnd').min=today;
+    const sendDateInput=document.getElementById('sendDateInput'); sendDateInput.min=today; sendDateInput.value=today;
 
     function toast(msg,type='info'){
-        const el=document.getElementById('status');
-        if (!el) return;
-        el.className=`mt-6 p-4 rounded-2xl ${type==='error'?'bg-red-500/20 border border-red-500/40':'bg-white/10 border border-white/20'}`;
-        el.textContent=msg; el.classList.remove('hidden'); setTimeout(()=>el.classList.add('hidden'),4500);
+      const el=document.getElementById('status');
+      el.className=`mt-6 p-4 rounded-2xl ${type==='error'?'bg-red-500/20 border border-red-500/40':'bg-white/10 border border-white/20'}`;
+      el.textContent=msg; el.classList.remove('hidden'); setTimeout(()=>el.classList.add('hidden'),4500);
     }
     function setBtnLoading(btn,loading,done='เสร็จ',label='กำลังทำงาน...'){
-        if (!btn) return;
-        if(loading){
-            btn.disabled=true; btn.dataset.prev=btn.innerHTML;
-            btn.innerHTML=`<span class="inline-flex items-center gap-2"><svg class="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>${label}</span>`;
-        } else {
-            btn.disabled=false; btn.innerHTML=btn.dataset.prev||done;
-        }
+      if(!btn) return;
+      if(loading){
+        btn.disabled=true; btn.dataset.prev=btn.innerHTML;
+        btn.innerHTML=`<span class="inline-flex items-center gap-2"><svg class="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>${label}</span>`;
+      } else {
+        btn.disabled=false; btn.innerHTML=btn.dataset.prev||done;
+      }
     }
 
     async function callAPI(action,payload={}){
-        const fd=new FormData();
-        fd.append('action',action);
-        fd.append('payload',JSON.stringify(payload));
-        const res=await fetch(APP_SCRIPT_WEBAPP_URL,{method:'POST',body:fd});
-        const t=await res.text();
-        try{ return JSON.parse(t) }catch{ return {ok:false,error:'Invalid JSON',raw:t} }
-    }
-    
-    /* ========== MAIN APP LOGIC (Check-in, Bulk, View, Edit, etc.) ========== */
-    // Note: All the following code assumes the relevant HTML elements exist in your tab panels.
-    
-    // Check-in Form Logic
-    const checkinBtn=document.getElementById('checkinBtn');
-    const checkinForm=document.getElementById('checkinForm');
-    if(checkinForm) {
-      checkinForm.addEventListener('submit',async e=>{
-        e.preventDefault();
-        const name=document.getElementById('nameSelect').value.trim();
-        const date=document.getElementById('dateInput').value;
-        if(!name||!date) return toast('กรุณากรอกข้อมูลให้ครบถ้วน','error');
-        if(date<today)   return toast('ไม่อนุญาตให้บันทึกย้อนหลัง','error');
-        let payload;
-        const splitMode = !document.getElementById('fullBox')?.classList.contains('hidden');
-        if(!splitMode){
-          const loc=document.getElementById('fullLocation').value.trim();
-          if(!loc) return toast('กรุณากรอกสถานที่ (เต็มวัน)','error');
-          payload={name,date,split:false,location:loc};
-        }else{
-          const am=document.getElementById('amLocation').value.trim(), pm=document.getElementById('pmLocation').value.trim();
-          if(!am||!pm) return toast('กรุณากรอกสถานที่ทั้ง AM และ PM','error');
-          payload={name,date,split:true,amLoc:am,pmLoc:pm};
-        }
-        try{
-          setBtnLoading(checkinBtn,true,'Check In','กำลังบันทึก...');
-          const {ok,upsert,error}=await callAPI('create',payload);
-          if(!ok) return toast(error||'บันทึกไม่สำเร็จ','error');
-          openPopup(upsert?'อัปเดตข้อมูลของวันนี้เรียบร้อย':'บันทึกเรียบร้อย');
-          if (typeof refreshSuggestions === 'function') refreshSuggestions();
-        } finally { setBtnLoading(checkinBtn,false,'Check In') }
-      });
+      const fd=new FormData();
+      fd.append('action',action);
+      fd.append('payload',JSON.stringify(payload));
+      const res=await fetch(APP_SCRIPT_WEBAPP_URL,{method:'POST',body:fd});
+      const t=await res.text();
+      try{ return JSON.parse(t) }catch{ return {ok:false,error:'Invalid JSON',raw:t} }
     }
 
-    // Bulk Create Logic
-    const bulkThisWeekBtn=document.getElementById('bulkThisWeek');
-    if (bulkThisWeekBtn) {
-      bulkThisWeekBtn.addEventListener('click',async()=>{
-        const base=commonBulk(); if(!base) return;
-        const {start,end}=getWeekRange(0);
-        const payload={...base,startDate:start,endDate:end,weekdaysOnly:true};
-        try{
-          setBtnLoading(bulkThisWeekBtn,true,'สร้าง จ–ศ สัปดาห์นี้','กำลังสร้าง...');
-          const r=await callAPI('bulkCreate',payload);
-          if(!r.ok) return toast(r.error||'บันทึกไม่สำเร็จ','error');
-          const msg='สร้างสำเร็จ: เพิ่ม '+r.created+' · อัปเดต '+r.updated+(r.skippedPast?(' · ข้ามย้อนหลัง '+r.skippedPast):'');
-          openPopup(msg);
-        } finally { setBtnLoading(bulkThisWeekBtn,false,'สร้าง จ–ศ สัปดาห์นี้') }
-      });
+    /* ========== TAB 1: CHECK IN & SUGGESTIONS ========== */
+    let splitMode=false;
+    const fullBtn=document.getElementById('fullBtn'), splitBtn=document.getElementById('splitBtn');
+    const fullBox=document.getElementById('fullBox'), splitBox=document.getElementById('splitBox');
+    fullBtn.addEventListener('click',()=>{ splitMode=false; fullBtn.classList.add('bg-white/20'); splitBtn.classList.remove('bg-white/20'); fullBox.classList.remove('hidden'); splitBox.classList.add('hidden'); });
+    splitBtn.addEventListener('click',()=>{ splitMode=true;  splitBtn.classList.add('bg-white/20'); fullBtn.classList.remove('bg-white/20'); splitBox.classList.remove('hidden'); fullBox.classList.add('hidden'); });
+    
+    const suggestWrap=document.getElementById('suggestWrap'), suggestEmpty=document.getElementById('suggestEmpty'), suggestLoading=document.getElementById('suggestLoading');
+    async function refreshSuggestions(){
+      const date=document.getElementById('dateInput').value;
+      const name=document.getElementById('nameSelect').value.trim();
+      if(!date) return;
+      suggestWrap.innerHTML=''; suggestEmpty.classList.add('hidden'); suggestLoading.classList.remove('hidden');
+      try{
+        const {ok,items,error}=await callAPI('suggest',{date,excludeName:name||''});
+        suggestLoading.classList.add('hidden');
+        if(!ok){ suggestWrap.innerHTML=`<div class="text-red-300 text-sm">${error||'โหลดคำแนะนำไม่สำเร็จ'}</div>`; return }
+        if(!items?.length){ suggestEmpty.classList.remove('hidden'); return }
+        suggestWrap.innerHTML=items.map(renderSuggestItem).join('');
+      }catch(_){
+        suggestLoading.classList.add('hidden');
+        suggestWrap.innerHTML=`<div class="text-white/80 text-sm">เกิดข้อผิดพลาดในการเชื่อมต่อ</div>`;
+      }
     }
-    
-    // ... (Add other event listeners for bulkNextWeekBtn, bulkRangeBtn, etc. in a similar safe way)
-    
+    function renderSuggestItem(it){
+      const [loc,part]=parsePart(it.location); const names=(it.names||[]).join(' ');
+      const partSpan = part ? '<span class="text-xs text-white/70">'+part+'</span>' : '';
+      return (
+        '<div class="chip rounded-xl p-3">'+
+          '<div class="flex items-center justify-between gap-3">'+
+            '<div>'+
+              '<div class="font-medium">'+loc+' '+partSpan+'</div>'+
+              '<div class="text-xs text-white/70">เพื่อน ('+it.count+'): '+names+'</div>'+
+            '</div>'+
+            '<div class="flex gap-2">'+
+              '<button type="button" class="mini-btn text-xs px-2 py-1" onclick="useSuggest(\''+escapeHTML(loc)+'\',\'both\')">ทั้งวัน</button>'+
+              '<button type="button" class="mini-btn text-xs px-2 py-1" onclick="useSuggest(\''+escapeHTML(loc)+'\',\'am\')">AM</button>'+
+              '<button type="button" class="mini-btn text-xs px-2 py-1" onclick="useSuggest(\''+escapeHTML(loc)+'\',\'pm\')">PM</button>'+
+            '</div>'+
+          '</div>'+
+        '</div>'
+      );
+    }
+    function parsePart(s){ const m=/(.*)\s+\((AM|PM)\)$/i.exec(s||''); return m?[m[1].trim(),'('+m[2].toUpperCase()+')']:[s,''] }
+    window.useSuggest=function(loc,mode){
+      if(mode==='both'){ if(!splitMode) document.getElementById('fullLocation').value=loc; else { document.getElementById('amLocation').value=loc; document.getElementById('pmLocation').value=loc; } }
+      else if(mode==='am'){ splitMode=true; splitBtn.click(); document.getElementById('amLocation').value=loc; }
+      else { splitMode=true; splitBtn.click(); document.getElementById('pmLocation').value=loc; }
+      toast('ใส่สถานที่: '+loc+' ('+(mode==='both'?'ทั้งวัน':mode.toUpperCase())+')');
+    }
+    document.getElementById('dateInput').addEventListener('change',refreshSuggestions);
+    document.getElementById('nameSelect').addEventListener('change',refreshSuggestions);
+    refreshSuggestions();
+
+    const checkinBtn=document.getElementById('checkinBtn');
+    document.getElementById('checkinForm').addEventListener('submit',async e=>{
+      e.preventDefault();
+      const name=document.getElementById('nameSelect').value.trim();
+      const date=document.getElementById('dateInput').value;
+      if(!name||!date) return toast('กรุณากรอกข้อมูลให้ครบถ้วน','error');
+      if(date<today)    return toast('ไม่อนุญาตให้บันทึกย้อนหลัง','error');
+
+      let payload;
+      if(!splitMode){
+        const loc=document.getElementById('fullLocation').value.trim();
+        if(!loc) return toast('กรุณากรอกสถานที่ (เต็มวัน)','error');
+        payload={name,date,split:false,location:loc};
+      }else{
+        const am=document.getElementById('amLocation').value.trim(), pm=document.getElementById('pmLocation').value.trim();
+        if(!am||!pm) return toast('กรุณากรอกสถานที่ทั้ง AM และ PM','error');
+        payload={name,date,split:true,amLoc:am,pmLoc:pm};
+      }
+
+      try{
+        setBtnLoading(checkinBtn,true,'Check In','กำลังบันทึก...');
+        const {ok,upsert,error}=await callAPI('create',payload);
+        if(!ok) return toast(error||'บันทึกไม่สำเร็จ','error');
+        openPopup(upsert?'อัปเดตข้อมูลของวันนี้เรียบร้อย':'บันทึกเรียบร้อย');
+        refreshSuggestions();
+      } finally { setBtnLoading(checkinBtn,false,'Check In') }
+    });
+
+    function commonBulk(){
+      const name=document.getElementById('nameSelect').value.trim();
+      if(!name){ toast('กรุณาเลือกผู้ใช้งานก่อน','error'); return null }
+      if(!splitMode){
+        const loc=document.getElementById('fullLocation').value.trim();
+        if(!loc){ toast('กรุณากรอกสถานที่ (เต็มวัน)','error'); return null }
+        return {name,split:false,location:loc};
+      }
+      const am=document.getElementById('amLocation').value.trim(), pm=document.getElementById('pmLocation').value.trim();
+      if(!am||!pm){ toast('กรุณากรอกสถานที่ทั้ง AM และ PM','error'); return null }
+      return {name,split:true,amLoc:am,pmLoc:pm};
+    }
+    const bulkThisWeekBtn=document.getElementById('bulkThisWeek'),
+          bulkNextWeekBtn=document.getElementById('bulkNextWeek'),
+          bulkRangeBtn=document.getElementById('bulkRange');
+
+    bulkThisWeekBtn.addEventListener('click',async()=>{
+      const base=commonBulk(); if(!base) return;
+      const {start,end}=getWeekRange(0);
+      const payload={...base,startDate:start,endDate:end,weekdaysOnly:true};
+      try{
+        setBtnLoading(bulkThisWeekBtn,true,'สร้าง จ–ศ สัปดาห์นี้','กำลังสร้าง...');
+        const r=await callAPI('bulkCreate',payload);
+        if(!r.ok) return toast(r.error||'บันทึกไม่สำเร็จ','error');
+        const msg='สร้างสำเร็จ: เพิ่ม '+r.created+' · อัปเดต '+r.updated+(r.skippedPast?(' · ข้ามย้อนหลัง '+r.skippedPast):'');
+        openPopup(msg);
+      } finally { setBtnLoading(bulkThisWeekBtn,false,'สร้าง จ–ศ สัปดาห์นี้') }
+    });
+
+    bulkNextWeekBtn.addEventListener('click',async()=>{
+      const base=commonBulk(); if(!base) return;
+      const {start,end}=getWeekRange(1);
+      const payload={...base,startDate:start,endDate:end,weekdaysOnly:true};
+      try{
+        setBtnLoading(bulkNextWeekBtn,true,'สร้าง จ–ศ สัปดาห์หน้า','กำลังสร้าง...');
+        const r=await callAPI('bulkCreate',payload);
+        if(!r.ok) return toast(r.error||'บันทึกไม่สำเร็จ','error');
+        openPopup('สร้างสำเร็จ: เพิ่ม '+r.created+' · อัปเดต '+r.updated);
+      } finally { setBtnLoading(bulkNextWeekBtn,false,'สร้าง จ–ศ สัปดาห์หน้า') }
+    });
+
+    bulkRangeBtn.addEventListener('click',async()=>{
+      const base=commonBulk(); if(!base) return;
+      const s=document.getElementById('rangeStart').value, e=document.getElementById('rangeEnd').value;
+      if(!s||!e) return toast('กรุณาเลือกช่วงวันที่ให้ครบ','error');
+      if(e<s)    return toast('วันสิ้นสุดต้องมากกว่าหรือเท่ากับวันเริ่ม','error');
+      try{
+        setBtnLoading(bulkRangeBtn,true,'บันทึกแบบช่วงวันที่','กำลังสร้าง...');
+        const r=await callAPI('bulkCreate',{...base,startDate:s,endDate:e,weekdaysOnly:false});
+        if(!r.ok) return toast(r.error||'บันทึกไม่สำเร็จ','error');
+        openPopup('สร้างสำเร็จ: เพิ่ม '+r.created+' · อัปเดต '+r.updated);
+      } finally { setBtnLoading(bulkRangeBtn,false,'บันทึกแบบช่วงวันที่') }
+    });
+
+    /* ========== TAB 2: SCHEDULE VIEW & EDIT ========== */
+    const viewBtn=document.getElementById('viewBtn');
+    viewBtn.addEventListener('click',async()=>{
+      const name=document.getElementById('viewName').value.trim();
+      if(!name) return toast('กรุณาเลือกชื่อผู้ใช้','error');
+      setBtnLoading(viewBtn,true,'ดูตาราง','กำลังโหลด...');
+      try{ await renderSchedule(name) } finally { setBtnLoading(viewBtn,false,'ดูตาราง') }
+    });
+
+    async function renderSchedule(name){
+      const wrap=document.getElementById('scheduleWrap'), list=document.getElementById('scheduleList');
+      wrap.classList.remove('hidden'); list.innerHTML='<div class="text-white/80">กำลังโหลด...</div>';
+      try{
+        const {ok,items,error}=await callAPI('listFuture',{name,from:today});
+        if(!ok) return list.innerHTML='<div class="text-red-300">'+(error||'โหลดไม่สำเร็จ')+'</div>';
+        if(!items?.length) return list.innerHTML='<div class="text-white/80">ไม่มีตารางงานในอนาคต</div>';
+        list.innerHTML=items.map(renderItem).join('');
+      }catch(_){
+        list.innerHTML='<div class="text-white/80">เกิดข้อผิดพลาดในการเชื่อมต่อ</div>';
+      }
+    }
+    function formatThai(iso){ const d=new Date(iso); const m=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.']; return d.getDate()+' '+m[d.getMonth()]+' '+(d.getFullYear()+543) }
+    function renderItem(e){
+      const detail = e.split
+        ? '<div class="text-sm text-white/90">🌅 AM: '+(e.am||'-')+'</div><div class="text-sm text-white/90">🌆 PM: '+(e.pm||'-')+'</div>'
+        : '<div class="text-sm text-white/90">'+(e.location || e.am || '-')+'</div>';
+      return (
+        '<div class="row-card p-4">'+
+          '<div class="flex items-center">'+
+            '<div class="flex-1 min-w-0">'+
+              '<div class="font-semibold">'+formatThai(e.date)+'</div>'+detail+
+            '</div>'+
+            '<button type="button" class="ml-4 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20" '+
+              'onclick="openEdit(\''+e.rowId+'\', '+(e.split?'true':'false')+', \''+e.date+'\', \''+escapeHTML(e.am||'')+'\', \''+escapeHTML(e.pm||'')+'\', \''+escapeHTML(e.location||'')+'\')">'+
+              'แก้ไข</button>'+
+          '</div>'+
+          '<div id="edit-'+e.rowId+'" class="hidden mt-4 pt-4 border-t border-white/10"></div>'+
+        '</div>'
+      );
+    }
+
+    window.openEdit=function(rowId,split,date,am,pm,loc){
+      const box=document.getElementById('edit-'+rowId), isSplit=!!split;
+      box.innerHTML=
+        '<div class="space-y-3">'+
+          '<div><label class="block text-sm font-semibold mb-1">วันที่</label><input type="date" id="ed-date-'+rowId+'" class="input" value="'+date+'" min="'+today+'"></div>'+
+          '<div><label class="block text-sm font-semibold mb-1">ช่วงเวลา</label>'+
+            '<div class="flex pill p-1">'+
+              '<button type="button" id="ed-full-'+rowId+'"  class="flex-1 py-2 rounded-xl '+(!isSplit?'bg-white/20':'')+'">เต็มวัน</button>'+
+              '<button type="button" id="ed-split-'+rowId+'" class="flex-1 py-2 rounded-xl '+(isSplit?'bg-white/20':'')+'">แยก AM/PM</button>'+
+            '</div>'+
+          '</div>'+
+          '<div id="ed-fullBox-'+rowId+'" class="'+(isSplit?'hidden':'')+'">'+
+            '<label class="block text-sm font-semibold mb-1">สถานที่ (ทั้งวัน)</label>'+
+            '<input type="text" id="ed-fullLoc-'+rowId+'" class="input" value="'+(loc||am||'')+'">'+
+          '</div>'+
+          '<div id="ed-splitBox-'+rowId+'" class="'+(isSplit?'':'hidden')+' space-y-3">'+
+            '<div><label class="block text-sm font-semibold mb-1">🌅 AM</label><input type="text" id="ed-am-'+rowId+'" class="input" value="'+(am||'')+'"></div>'+
+            '<div><label class="block text-sm font-semibold mb-1">🌆 PM</label><input type="text" id="ed-pm-'+rowId+'" class="input" value="'+(pm||'')+'"></div>'+
+          '</div>'+
+          '<div class="flex flex-col sm:flex-row gap-3 pt-2">'+
+            '<button type="button" id="saveBtn-'+rowId+'"    class="btn flex-1 py-2">บันทึก</button>'+
+            '<button type="button" id="cancelBtn-'+rowId+'" class="bg-white/10 hover:bg-white/20 flex-1 py-2 rounded-xl">ยกเลิก</button>'+
+            '<button type="button" class="flex-1 py-2 rounded-xl border border-red-400/40 bg-red-500/15 hover:bg-red-500/25" data-action="delete" data-rowid="'+rowId+'">ลบ</button>'+
+          '</div>'+
+        '</div>';
+      box.classList.remove('hidden');
+
+      document.getElementById('ed-full-'+rowId).onclick=()=>toggleEditMode(rowId,false);
+      document.getElementById('ed-split-'+rowId).onclick=()=>toggleEditMode(rowId,true);
+      document.getElementById('cancelBtn-'+rowId).onclick=()=>closeEdit(rowId);
+      document.getElementById('saveBtn-'+rowId).onclick=async e=>{ e.preventDefault(); await saveEdit(rowId) };
+    };
+
+    document.getElementById('scheduleList').addEventListener('click', async (ev) => {
+      const btn = ev.target.closest('[data-action="delete"]');
+      if (!btn) return;
+      const rowId = btn.dataset.rowid;
+      if (!confirm('ต้องการลบรายการนี้ใช่หรือไม่?')) return;
+      try {
+        setBtnLoading(btn, true, 'ลบ', 'กำลังลบ...');
+        const { ok, error } = await callAPI('delete', { rowId });
+        setBtnLoading(btn, false, 'ลบ');
+        if (!ok) return toast(error || 'ลบไม่สำเร็จ', 'error');
+        toast('ลบเรียบร้อย');
+        const name = document.getElementById('viewName')?.value?.trim();
+        if (name) await renderSchedule(name);
+      } catch {
+        setBtnLoading(btn, false, 'ลบ'); toast('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+      }
+    });
+
+    function toggleEditMode(id,toSplit){
+      const f=document.getElementById('ed-full-'+id),
+            s=document.getElementById('ed-split-'+id),
+            fb=document.getElementById('ed-fullBox-'+id),
+            sb=document.getElementById('ed-splitBox-'+id);
+      if(toSplit){ s.classList.add('bg-white/20'); f.classList.remove('bg-white/20'); sb.classList.remove('hidden'); fb.classList.add('hidden'); }
+      else{ f.classList.add('bg-white/20'); s.classList.remove('bg-white/20'); fb.classList.remove('hidden'); sb.classList.add('hidden'); }
+    }
+    function closeEdit(id){ document.getElementById('edit-'+id).classList.add('hidden'); }
+
+    async function saveEdit(rowId){
+      const date=document.getElementById('ed-date-'+rowId).value;
+      if(!date) return toast('กรุณาเลือกวันที่','error');
+      if(date<today) return toast('ไม่สามารถตั้งย้อนหลังได้','error');
+      const isFull=!document.getElementById('ed-fullBox-'+rowId).classList.contains('hidden');
+      const btn=document.getElementById('saveBtn-'+rowId);
+      let payload={rowId,date};
+      if(isFull){
+        const loc=document.getElementById('ed-fullLoc-'+rowId).value.trim();
+        if(!loc) return toast('กรุณากรอกสถานที่ (เต็มวัน)','error');
+        payload.split=false; payload.location=loc;
+      } else {
+        const am=document.getElementById('ed-am-'+rowId).value.trim(),
+              pm=document.getElementById('ed-pm-'+rowId).value.trim();
+        if(!am||!pm) return toast('กรุณากรอกสถานที่ทั้ง AM และ PM','error');
+        payload.split=true; payload.amLoc=am; payload.pmLoc=pm;
+      }
+      try{
+        setBtnLoading(btn,true,'บันทึก','กำลังบันทึก...');
+        const {ok,error}=await callAPI('update',payload);
+        if(!ok) return toast(error||'แก้ไขไม่สำเร็จ','error');
+        openPopup('แก้ไขข้อมูลเรียบร้อยแล้ว');
+        const name=document.getElementById('viewName')?.value?.trim();
+        if(name) renderSchedule(name);
+      } finally { setBtnLoading(btn,false,'บันทึก') }
+    }
+
+    /* ===== TAB 3: SCHEDULER ===== */
+    const weekdayWrap=document.getElementById('weekdayWrap'), labels=['อา','จ','อ','พ','พฤ','ศ','ส'];
+    const dayButtons=[];
+    (function(){
+      if(!weekdayWrap) return;
+      for(let i=0;i<7;i++){
+        const b=document.createElement('button');
+        b.type='button';
+        b.className='px-2 py-2 rounded-lg bg-white/10 hover:bg-white/20 w-10 text-center';
+        b.textContent=labels[i];
+        b.dataset.day=i;
+        b.dataset.active=(i>=1&&i<=5)?'1':'0';
+        toggleDay(b);
+        b.addEventListener('click',()=>{b.dataset.active=b.dataset.active==='1'?'0':'1'; toggleDay(b)});
+        weekdayWrap.appendChild(b);
+        dayButtons.push(b);
+      }
+    })();
+    function toggleDay(b){ if(b.dataset.active==='1'){ b.classList.add('bg-emerald-500/20','border','border-emerald-400/40') } else { b.classList.remove('bg-emerald-500/20','border','border-emerald-400/40') } }
+    const isoToJs=d=>(d%7), jsToIso=i=>(i===0?7:i);
+
+    async function loadSchedule(){
+      if(!document.getElementById('schedStatus')) return;
+      const {ok,config,error}=await callAPI('getSchedule',{});
+      if(!ok) return document.getElementById('schedStatus').textContent=error||'โหลดตารางส่งไม่สำเร็จ';
+      document.getElementById('schedEnabled').checked=!!config.enabled;
+      document.getElementById('schedTime').value=config.time||'08:30';
+      document.getElementById('schedSkipHolidays').checked=!!config.skipHolidays;
+      dayButtons.forEach(b=>{ b.dataset.active='0'; toggleDay(b) });
+      (config.days||[1,2,3,4,5]).forEach(d=>{ const idx=isoToJs(d); if(dayButtons[idx]){ dayButtons[idx].dataset.active='1'; toggleDay(dayButtons[idx]) } });
+      document.getElementById('schedStatus').textContent=config.enabled?('จะส่งอัตโนมัติทุกวันเวลา '+config.time):'ปิดการส่งอัตโนมัติอยู่';
+    }
+    loadSchedule();
+    document.getElementById('reloadSchedBtn')?.addEventListener('click',loadSchedule);
+
+    document.getElementById('saveSchedBtn')?.addEventListener('click',async()=>{
+      const btn=document.getElementById('saveSchedBtn');
+      const enabled=document.getElementById('schedEnabled').checked,
+            time=document.getElementById('schedTime').value,
+            skipHolidays=document.getElementById('schedSkipHolidays').checked;
+      const days=dayButtons.map((b,i)=>b.dataset.active==='1'?jsToIso(i):null).filter(Boolean);
+      if(!/^\d{2}:\d{2}$/.test(time)) return toast('รูปแบบเวลาไม่ถูกต้อง (HH:mm)','error');
+      if(enabled && days.length===0) return toast('กรุณาเลือกอย่างน้อย 1 วัน','error');
+      try{
+        setBtnLoading(btn,true,'บันทึกตารางส่ง','กำลังบันทึก...');
+        const r=await callAPI('saveSchedule',{enabled,time,days,skipHolidays});
+        if(!r.ok) return toast(r.error||'บันทึกไม่สำเร็จ','error');
+        toast('บันทึกตารางส่งเรียบร้อย');
+        loadSchedule();
+      } finally { setBtnLoading(btn,false,'บันทึกตารางส่ง') }
+    });
+
+    document.getElementById('sendNowBtn')?.addEventListener('click',async()=>{
+      const btn=document.getElementById('sendNowBtn');
+      const date=sendDateInput.value;
+      if(!date) return toast('กรุณาเลือกวันที่ก่อน','error');
+      try{
+        setBtnLoading(btn,true,'ส่งเข้าไลน์เดี๋ยวนี้','กำลังส่ง...');
+        const r=await callAPI('pushNow',{date});
+        if(!r.ok) return toast(r.error||'ส่งไม่สำเร็จ','error');
+        openPopup('ส่งเข้าไลน์เรียบร้อย');
+      } finally { setBtnLoading(btn,false,'ส่งเข้าไลน์เดี๋ยวนี้') }
+    });
   });
   </script>
 </body>
